@@ -1,0 +1,13 @@
+{
+    "source_bucket": "artifyc-user-images-qa/upload-buffer",
+    "destination_buckets": [
+        {
+            "name": "artifyc-user-images-qa/upload-final/300px",
+            "width_size": 300
+        }, 
+        {
+            "name": "artifyc-user-images-qa/upload-final/600px",
+            "width_size": 600
+        }
+    ]
+}
