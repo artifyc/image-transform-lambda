@@ -6,7 +6,7 @@ from os import path
 from urllib.parse import quote_plus, unquote_plus
 from PIL import Image
 from botocore.client import ClientError
-
+from PIL import _imaging
 
 class ImageResize():
     """
