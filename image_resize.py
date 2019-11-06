@@ -110,7 +110,7 @@ class ImageResize():
         if extension in ['.jpeg', '.jpg']:
             format = 'JPEG'
         if extension in ['.png']:
-            format = 'PNG'
+            format = 'JPEG'  #Want all to be JPEG
 
         img.save(buffer, format)
         buffer.seek(0)
@@ -131,9 +131,21 @@ class ImageResize():
             bucket_name=bucket_name,
             key=key,
         )
-        obj.put(ACL='public-read', Body=body)
+        obj.put(ACL='private', Body=body)
 
         print('File saved at {}/{}'.format(
+            bucket_name,
+            key,
+        ))
+
+    def remove(self, bucket_name, key):
+        obj = self.s3.Object(
+            bucket_name=bucket_name,
+            key=key,
+        )
+        obj.delete()
+
+        print('File deleted at {}/{}'.format(
             bucket_name,
             key,
         ))
@@ -199,4 +211,23 @@ def lambda_handler(event, context):
                 object_extension,
                 bucket_size
             )
-            image_resize.upload(bucket_name, object_key, resized_image)
+            image_resize.upload(bucket_name=bucket_name, key=object_key, body=resized_image)
+            image_resize.remove(bucket_name=image_resize.source_bucket, key=object_key)
+
+
+#Steps:
+#   Trigger on put into s3 upload buffer 
+#   Transform down to smaller
+#   Upload to new s3 directory
+#   Put metadata into table
+#   Delete buffer image
+
+#  dynamo.put_item(
+#         Table_Name='',
+#         Item = {
+#             'user_id' : {'S': user_id},
+#             'image_id' : {'S': image_id},
+#             'uploaded_timestamp' : {'S': current_timestamp},
+#             'tags' : {'S': tags_list},
+#         }
+#     )
